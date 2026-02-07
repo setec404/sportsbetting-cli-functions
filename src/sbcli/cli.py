@@ -41,6 +41,10 @@ from sbcli.io.input_parser import parse_input
 from sbcli.io.output_formatter import output_result
 
 
+# Context settings to allow negative numbers as arguments
+NEGATIVE_NUMBER_CONTEXT = {"ignore_unknown_options": True, "allow_interspersed_args": False}
+
+
 @click.group()
 @click.version_option(version="0.1.0", prog_name="sbcli")
 def cli() -> None:
@@ -48,7 +52,7 @@ def cli() -> None:
     pass
 
 
-@cli.command()
+@cli.command(context_settings=NEGATIVE_NUMBER_CONTEXT)
 @click.argument('odds', type=float, required=False)
 @click.option('--json', 'json_format', is_flag=True, help='Output as JSON')
 def us2dec(odds: float, json_format: bool) -> None:
@@ -82,7 +86,7 @@ def us2dec(odds: float, json_format: bool) -> None:
     output_result(result, json_format)
 
 
-@cli.command()
+@cli.command(context_settings=NEGATIVE_NUMBER_CONTEXT)
 @click.argument('odds', type=float, nargs=-1)
 @click.option('--json', 'json_format', is_flag=True, help='Output as JSON')
 def us2par(odds: tuple, json_format: bool) -> None:
@@ -109,7 +113,7 @@ def us2par(odds: tuple, json_format: bool) -> None:
     output_result(result, json_format)
 
 
-@cli.command()
+@cli.command(context_settings=NEGATIVE_NUMBER_CONTEXT)
 @click.argument('odds', type=float, required=False)
 @click.option('--json', 'json_format', is_flag=True, help='Output as JSON')
 def dec2us(odds: float, json_format: bool) -> None:
@@ -138,13 +142,13 @@ def dec2us(odds: float, json_format: bool) -> None:
     output_result(result, json_format)
 
 
-@cli.command()
+@cli.command(context_settings=NEGATIVE_NUMBER_CONTEXT)
 def sbrver() -> None:
     """Display sbcli version"""
     click.echo("sbcli version 0.1.0")
 
 
-@cli.command()
+@cli.command(context_settings=NEGATIVE_NUMBER_CONTEXT)
 @click.argument('odds', type=float, required=False)
 @click.argument('wager', type=float, required=False, default=1)
 @click.option('--json', 'json_format', is_flag=True, help='Output as JSON')
@@ -176,7 +180,7 @@ def us2win(odds: float, wager: float, json_format: bool) -> None:
     output_result(result, json_format)
 
 
-@cli.command()
+@cli.command(context_settings=NEGATIVE_NUMBER_CONTEXT)
 @click.argument('odds', type=float, required=False)
 @click.argument('wager', type=float, required=False, default=1)
 @click.option('--json', 'json_format', is_flag=True, help='Output as JSON')
@@ -208,7 +212,7 @@ def dec2win(odds: float, wager: float, json_format: bool) -> None:
     output_result(result, json_format)
 
 
-@cli.command()
+@cli.command(context_settings=NEGATIVE_NUMBER_CONTEXT)
 @click.argument('odds', type=float, required=False)
 @click.argument('wager', type=float, required=False, default=1)
 @click.argument('result_str', type=str, required=False, default="WIN")
@@ -245,7 +249,7 @@ def us2res(odds: float, wager: float, result_str: str, json_format: bool) -> Non
     output_result(result, json_format)
 
 
-@cli.command()
+@cli.command(context_settings=NEGATIVE_NUMBER_CONTEXT)
 @click.argument('odds', type=float, required=False)
 @click.argument('wager', type=float, required=False, default=1)
 @click.argument('result_str', type=str, required=False, default="WIN")
@@ -282,7 +286,7 @@ def dec2res(odds: float, wager: float, result_str: str, json_format: bool) -> No
     output_result(result, json_format)
 
 
-@cli.command()
+@cli.command(context_settings=NEGATIVE_NUMBER_CONTEXT)
 @click.argument('odds', type=float, required=False)
 @click.option('--json', 'json_format', is_flag=True, help='Output as JSON')
 def us2prob(odds: float, json_format: bool) -> None:
@@ -311,7 +315,7 @@ def us2prob(odds: float, json_format: bool) -> None:
     output_result(result, json_format)
 
 
-@cli.command()
+@cli.command(context_settings=NEGATIVE_NUMBER_CONTEXT)
 @click.argument('odds', type=float, required=False)
 @click.option('--json', 'json_format', is_flag=True, help='Output as JSON')
 def dec2prob(odds: float, json_format: bool) -> None:
@@ -340,7 +344,7 @@ def dec2prob(odds: float, json_format: bool) -> None:
     output_result(result, json_format)
 
 
-@cli.command()
+@cli.command(context_settings=NEGATIVE_NUMBER_CONTEXT)
 @click.argument('odds', type=float, nargs=-1)
 @click.option('--json', 'json_format', is_flag=True, help='Output as JSON')
 def us2hold(odds: tuple, json_format: bool) -> None:
@@ -367,7 +371,7 @@ def us2hold(odds: tuple, json_format: bool) -> None:
     output_result(result, json_format)
 
 
-@cli.command()
+@cli.command(context_settings=NEGATIVE_NUMBER_CONTEXT)
 @click.argument('odds', type=float, nargs=-1)
 @click.option('--json', 'json_format', is_flag=True, help='Output as JSON')
 def dec2hold(odds: tuple, json_format: bool) -> None:
@@ -394,7 +398,7 @@ def dec2hold(odds: tuple, json_format: bool) -> None:
     output_result(result, json_format)
 
 
-@cli.command()
+@cli.command(context_settings=NEGATIVE_NUMBER_CONTEXT)
 @click.argument('odds', type=float, nargs=-1)
 @click.option('--json', 'json_format', is_flag=True, help='Output as JSON')
 def us2real(odds: tuple, json_format: bool) -> None:
@@ -433,7 +437,7 @@ def us2real(odds: tuple, json_format: bool) -> None:
         output_result(result_dict['hold'], False)
 
 
-@cli.command()
+@cli.command(context_settings=NEGATIVE_NUMBER_CONTEXT)
 @click.argument('odds', type=float, nargs=-1)
 @click.option('--json', 'json_format', is_flag=True, help='Output as JSON')
 def dec2real(odds: tuple, json_format: bool) -> None:
@@ -472,7 +476,7 @@ def dec2real(odds: tuple, json_format: bool) -> None:
         output_result(result_dict['hold'], False)
 
 
-@cli.command()
+@cli.command(context_settings=NEGATIVE_NUMBER_CONTEXT)
 @click.argument('odds', type=float, nargs=-1)
 @click.option('--json', 'json_format', is_flag=True, help='Output as JSON')
 def us2fair(odds: tuple, json_format: bool) -> None:
@@ -508,7 +512,7 @@ def us2fair(odds: tuple, json_format: bool) -> None:
             output_result(fair_odd, False)
 
 
-@cli.command()
+@cli.command(context_settings=NEGATIVE_NUMBER_CONTEXT)
 @click.argument('odds', type=float, nargs=-1)
 @click.option('--json', 'json_format', is_flag=True, help='Output as JSON')
 def dec2fair(odds: tuple, json_format: bool) -> None:
@@ -544,7 +548,7 @@ def dec2fair(odds: tuple, json_format: bool) -> None:
             output_result(fair_odd, False)
 
 
-@cli.command()
+@cli.command(context_settings=NEGATIVE_NUMBER_CONTEXT)
 @click.argument('probability', type=float, required=False)
 @click.argument('odds', type=float, required=False)
 @click.option('--json', 'json_format', is_flag=True, help='Output as JSON')
@@ -575,7 +579,7 @@ def probus2edge(probability: float, odds: float, json_format: bool) -> None:
     output_result(result, json_format)
 
 
-@cli.command()
+@cli.command(context_settings=NEGATIVE_NUMBER_CONTEXT)
 @click.argument('probability', type=float, required=False)
 @click.argument('odds', type=float, required=False)
 @click.option('--json', 'json_format', is_flag=True, help='Output as JSON')
@@ -606,7 +610,7 @@ def probdec2edge(probability: float, odds: float, json_format: bool) -> None:
     output_result(result, json_format)
 
 
-@cli.command()
+@cli.command(context_settings=NEGATIVE_NUMBER_CONTEXT)
 @click.argument('edge', type=float, required=False)
 @click.argument('odds', type=float, required=False)
 @click.option('--json', 'json_format', is_flag=True, help='Output as JSON')
@@ -637,7 +641,7 @@ def edgeus2prob(edge: float, odds: float, json_format: bool) -> None:
     output_result(result, json_format)
 
 
-@cli.command()
+@cli.command(context_settings=NEGATIVE_NUMBER_CONTEXT)
 @click.argument('edge', type=float, required=False)
 @click.argument('odds', type=float, required=False)
 @click.option('--json', 'json_format', is_flag=True, help='Output as JSON')
@@ -668,7 +672,7 @@ def edgedec2prob(edge: float, odds: float, json_format: bool) -> None:
     output_result(result, json_format)
 
 
-@cli.command()
+@cli.command(context_settings=NEGATIVE_NUMBER_CONTEXT)
 @click.argument('probability', type=float, required=False)
 @click.argument('edge', type=float, required=False)
 @click.option('--json', 'json_format', is_flag=True, help='Output as JSON')
@@ -699,7 +703,7 @@ def probedge2us(probability: float, edge: float, json_format: bool) -> None:
     output_result(result, json_format)
 
 
-@cli.command()
+@cli.command(context_settings=NEGATIVE_NUMBER_CONTEXT)
 @click.argument('probability', type=float, required=False)
 @click.argument('edge', type=float, required=False)
 @click.option('--json', 'json_format', is_flag=True, help='Output as JSON')
