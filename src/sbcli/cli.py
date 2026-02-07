@@ -15,6 +15,10 @@ from sbcli.core.winnings import (
     us_to_result,
     decimal_to_result,
 )
+from sbcli.core.probability import (
+    us_to_probability,
+    decimal_to_probability,
+)
 from sbcli.io.input_parser import parse_input
 from sbcli.io.output_formatter import output_result
 
@@ -256,6 +260,64 @@ def dec2res(odds: float, wager: float, result_str: str, json_format: bool) -> No
             raise click.UsageError('Missing odds argument')
     else:
         result = decimal_to_result(odds, wager, result_str)
+
+    output_result(result, json_format)
+
+
+@cli.command()
+@click.argument('odds', type=float, required=False)
+@click.option('--json', 'json_format', is_flag=True, help='Output as JSON')
+def us2prob(odds: float, json_format: bool) -> None:
+    """
+    Convert US odds to implied probability.
+
+    Examples:
+        sbcli us2prob 100
+        sbcli us2prob -- -110
+        echo "-110" | sbcli us2prob
+    """
+    if odds is None:
+        if not sys.stdin.isatty():
+            input_data = sys.stdin.read()
+            odds_list = parse_input(input_data)
+
+            if len(odds_list) == 0:
+                raise click.UsageError('No valid odds provided')
+
+            result = us_to_probability(odds_list[0])
+        else:
+            raise click.UsageError('Missing odds argument')
+    else:
+        result = us_to_probability(odds)
+
+    output_result(result, json_format)
+
+
+@cli.command()
+@click.argument('odds', type=float, required=False)
+@click.option('--json', 'json_format', is_flag=True, help='Output as JSON')
+def dec2prob(odds: float, json_format: bool) -> None:
+    """
+    Convert decimal odds to implied probability.
+
+    Examples:
+        sbcli dec2prob 2.0
+        sbcli dec2prob 1.909090909
+        echo "2.5" | sbcli dec2prob
+    """
+    if odds is None:
+        if not sys.stdin.isatty():
+            input_data = sys.stdin.read()
+            odds_list = parse_input(input_data)
+
+            if len(odds_list) == 0:
+                raise click.UsageError('No valid odds provided')
+
+            result = decimal_to_probability(odds_list[0])
+        else:
+            raise click.UsageError('Missing odds argument')
+    else:
+        result = decimal_to_probability(odds)
 
     output_result(result, json_format)
 
