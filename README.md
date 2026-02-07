@@ -1,8 +1,7 @@
 # sbcli - Sports Betting CLI Calculator
 warning. vibe coded with Claude just wanted to see if it could take the input of 
 https://www.sportsbookreview.com/forum/handicapper-think-tank/23552-simple-vba-sports-betting-functions-template-for-excel 
-and make a cli version for terminal. I have done some basic testing seems good other than the us2hold/dec2hold function
-returning -110 -110 as a hold of 4.7% ill update it later. the usage of '--' is not correct functions have been updated 
+and make a cli version for terminal.the usage of '--' is not correct functions have been updated 
 to work as 'sbcli us2dec -110' etc
 
 
