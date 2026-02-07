@@ -1,9 +1,7 @@
 # sbcli - Sports Betting CLI Calculator
 warning. vibe coded with Claude just wanted to see if it could take the input of 
 https://www.sportsbookreview.com/forum/handicapper-think-tank/23552-simple-vba-sports-betting-functions-template-for-excel 
-and make a cli version for terminal.the usage of '--' is not correct functions have been updated 
-to work as 'sbcli us2dec -110' etc
-
+and make a cli version for terminal.
 
 A Python CLI tool for sports betting calculations with 35+ functions for odds manipulation, probability calculations, edge analysis, and more.
 
@@ -25,15 +23,15 @@ pip install -r requirements-dev.txt
 
 ```bash
 # Convert US odds to decimal
-sbcli us2dec -- -110
+sbcli us2dec -110
 # Output: 1.909090909
 
 # Calculate implied probability
-sbcli us2prob -- -110
+sbcli us2prob -110
 # Output: 0.523809524
 
 # Calculate edge
-sbcli probus2edge 0.55 -- -110
+sbcli probus2edge 0.55 -110
 # Output: 0.05
 
 # Pipe commands together
