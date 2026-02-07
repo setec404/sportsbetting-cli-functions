@@ -19,6 +19,16 @@ from sbcli.core.probability import (
     us_to_probability,
     decimal_to_probability,
 )
+from sbcli.core.hold import (
+    us_to_hold,
+    decimal_to_hold,
+)
+from sbcli.core.fair_value import (
+    us_to_real,
+    decimal_to_real,
+    us_to_fair,
+    decimal_to_fair,
+)
 from sbcli.io.input_parser import parse_input
 from sbcli.io.output_formatter import output_result
 
@@ -320,6 +330,210 @@ def dec2prob(odds: float, json_format: bool) -> None:
         result = decimal_to_probability(odds)
 
     output_result(result, json_format)
+
+
+@cli.command()
+@click.argument('odds', type=float, nargs=-1)
+@click.option('--json', 'json_format', is_flag=True, help='Output as JSON')
+def us2hold(odds: tuple, json_format: bool) -> None:
+    """
+    Calculate theoretical hold from US odds.
+
+    Examples:
+        sbcli us2hold -- -110 -110
+        echo "-110 -110" | sbcli us2hold
+    """
+    if not odds:
+        if not sys.stdin.isatty():
+            input_data = sys.stdin.read()
+            odds_list = parse_input(input_data)
+        else:
+            raise click.UsageError('Missing odds arguments')
+    else:
+        odds_list = [Decimal(str(o)) for o in odds]
+
+    if len(odds_list) < 2:
+        raise click.UsageError('At least 2 odds required')
+
+    result = us_to_hold(odds_list)
+    output_result(result, json_format)
+
+
+@cli.command()
+@click.argument('odds', type=float, nargs=-1)
+@click.option('--json', 'json_format', is_flag=True, help='Output as JSON')
+def dec2hold(odds: tuple, json_format: bool) -> None:
+    """
+    Calculate theoretical hold from decimal odds.
+
+    Examples:
+        sbcli dec2hold 1.909090909 1.909090909
+        echo "1.909090909 1.909090909" | sbcli dec2hold
+    """
+    if not odds:
+        if not sys.stdin.isatty():
+            input_data = sys.stdin.read()
+            odds_list = parse_input(input_data)
+        else:
+            raise click.UsageError('Missing odds arguments')
+    else:
+        odds_list = [Decimal(str(o)) for o in odds]
+
+    if len(odds_list) < 2:
+        raise click.UsageError('At least 2 odds required')
+
+    result = decimal_to_hold(odds_list)
+    output_result(result, json_format)
+
+
+@cli.command()
+@click.argument('odds', type=float, nargs=-1)
+@click.option('--json', 'json_format', is_flag=True, help='Output as JSON')
+def us2real(odds: tuple, json_format: bool) -> None:
+    """
+    Calculate zero-vig (real) probabilities from US odds.
+
+    Outputs probabilities followed by hold.
+
+    Examples:
+        sbcli us2real -- -110 -110
+        echo "-110 -110" | sbcli us2real
+    """
+    if not odds:
+        if not sys.stdin.isatty():
+            input_data = sys.stdin.read()
+            odds_list = parse_input(input_data)
+        else:
+            raise click.UsageError('Missing odds arguments')
+    else:
+        odds_list = [Decimal(str(o)) for o in odds]
+
+    if len(odds_list) < 2:
+        raise click.UsageError('At least 2 odds required')
+
+    result_dict = us_to_real(odds_list)
+
+    if json_format:
+        output_result({
+            'probabilities': result_dict['probabilities'],
+            'hold': result_dict['hold']
+        }, json_format)
+    else:
+        # Output probabilities first, then hold
+        for prob in result_dict['probabilities']:
+            output_result(prob, False)
+        output_result(result_dict['hold'], False)
+
+
+@cli.command()
+@click.argument('odds', type=float, nargs=-1)
+@click.option('--json', 'json_format', is_flag=True, help='Output as JSON')
+def dec2real(odds: tuple, json_format: bool) -> None:
+    """
+    Calculate zero-vig (real) probabilities from decimal odds.
+
+    Outputs probabilities followed by hold.
+
+    Examples:
+        sbcli dec2real 1.909090909 1.909090909
+        echo "1.909090909 1.909090909" | sbcli dec2real
+    """
+    if not odds:
+        if not sys.stdin.isatty():
+            input_data = sys.stdin.read()
+            odds_list = parse_input(input_data)
+        else:
+            raise click.UsageError('Missing odds arguments')
+    else:
+        odds_list = [Decimal(str(o)) for o in odds]
+
+    if len(odds_list) < 2:
+        raise click.UsageError('At least 2 odds required')
+
+    result_dict = decimal_to_real(odds_list)
+
+    if json_format:
+        output_result({
+            'probabilities': result_dict['probabilities'],
+            'hold': result_dict['hold']
+        }, json_format)
+    else:
+        # Output probabilities first, then hold
+        for prob in result_dict['probabilities']:
+            output_result(prob, False)
+        output_result(result_dict['hold'], False)
+
+
+@cli.command()
+@click.argument('odds', type=float, nargs=-1)
+@click.option('--json', 'json_format', is_flag=True, help='Output as JSON')
+def us2fair(odds: tuple, json_format: bool) -> None:
+    """
+    Calculate fair value (zero-vig) US odds.
+
+    Examples:
+        sbcli us2fair -- -200 176
+        echo "-200 176" | sbcli us2fair
+    """
+    if not odds:
+        if not sys.stdin.isatty():
+            input_data = sys.stdin.read()
+            odds_list = parse_input(input_data)
+        else:
+            raise click.UsageError('Missing odds arguments')
+    else:
+        odds_list = [Decimal(str(o)) for o in odds]
+
+    if len(odds_list) < 2:
+        raise click.UsageError('At least 2 odds required')
+
+    result_dict = us_to_fair(odds_list)
+
+    if json_format:
+        output_result({
+            'fair_odds': result_dict['fair_odds'],
+            'hold': result_dict['hold']
+        }, json_format)
+    else:
+        # Output fair odds
+        for fair_odd in result_dict['fair_odds']:
+            output_result(fair_odd, False)
+
+
+@cli.command()
+@click.argument('odds', type=float, nargs=-1)
+@click.option('--json', 'json_format', is_flag=True, help='Output as JSON')
+def dec2fair(odds: tuple, json_format: bool) -> None:
+    """
+    Calculate fair value (zero-vig) decimal odds.
+
+    Examples:
+        sbcli dec2fair 1.5 2.84
+        echo "1.5 2.84" | sbcli dec2fair
+    """
+    if not odds:
+        if not sys.stdin.isatty():
+            input_data = sys.stdin.read()
+            odds_list = parse_input(input_data)
+        else:
+            raise click.UsageError('Missing odds arguments')
+    else:
+        odds_list = [Decimal(str(o)) for o in odds]
+
+    if len(odds_list) < 2:
+        raise click.UsageError('At least 2 odds required')
+
+    result_dict = decimal_to_fair(odds_list)
+
+    if json_format:
+        output_result({
+            'fair_odds': result_dict['fair_odds'],
+            'hold': result_dict['hold']
+        }, json_format)
+    else:
+        # Output fair odds
+        for fair_odd in result_dict['fair_odds']:
+            output_result(fair_odd, False)
 
 
 if __name__ == '__main__':
