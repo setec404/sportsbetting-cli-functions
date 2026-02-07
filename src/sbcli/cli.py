@@ -29,6 +29,14 @@ from sbcli.core.fair_value import (
     us_to_fair,
     decimal_to_fair,
 )
+from sbcli.core.edge import (
+    prob_us_to_edge,
+    prob_dec_to_edge,
+    edge_us_to_prob,
+    edge_dec_to_prob,
+    prob_edge_to_us,
+    prob_edge_to_dec,
+)
 from sbcli.io.input_parser import parse_input
 from sbcli.io.output_formatter import output_result
 
@@ -534,6 +542,192 @@ def dec2fair(odds: tuple, json_format: bool) -> None:
         # Output fair odds
         for fair_odd in result_dict['fair_odds']:
             output_result(fair_odd, False)
+
+
+@cli.command()
+@click.argument('probability', type=float, required=False)
+@click.argument('odds', type=float, required=False)
+@click.option('--json', 'json_format', is_flag=True, help='Output as JSON')
+def probus2edge(probability: float, odds: float, json_format: bool) -> None:
+    """
+    Calculate edge from probability and US odds.
+
+    Examples:
+        sbcli probus2edge 0.55 -- -110
+        echo "0.55 -110" | sbcli probus2edge
+    """
+    if probability is None:
+        if not sys.stdin.isatty():
+            input_data = sys.stdin.read()
+            values = parse_input(input_data)
+
+            if len(values) < 2:
+                raise click.UsageError('Need probability and odds')
+
+            result = prob_us_to_edge(values[0], values[1])
+        else:
+            raise click.UsageError('Missing arguments')
+    else:
+        if odds is None:
+            raise click.UsageError('Missing odds argument')
+        result = prob_us_to_edge(probability, odds)
+
+    output_result(result, json_format)
+
+
+@cli.command()
+@click.argument('probability', type=float, required=False)
+@click.argument('odds', type=float, required=False)
+@click.option('--json', 'json_format', is_flag=True, help='Output as JSON')
+def probdec2edge(probability: float, odds: float, json_format: bool) -> None:
+    """
+    Calculate edge from probability and decimal odds.
+
+    Examples:
+        sbcli probdec2edge 0.55 1.909090909
+        echo "0.55 1.909090909" | sbcli probdec2edge
+    """
+    if probability is None:
+        if not sys.stdin.isatty():
+            input_data = sys.stdin.read()
+            values = parse_input(input_data)
+
+            if len(values) < 2:
+                raise click.UsageError('Need probability and odds')
+
+            result = prob_dec_to_edge(values[0], values[1])
+        else:
+            raise click.UsageError('Missing arguments')
+    else:
+        if odds is None:
+            raise click.UsageError('Missing odds argument')
+        result = prob_dec_to_edge(probability, odds)
+
+    output_result(result, json_format)
+
+
+@cli.command()
+@click.argument('edge', type=float, required=False)
+@click.argument('odds', type=float, required=False)
+@click.option('--json', 'json_format', is_flag=True, help='Output as JSON')
+def edgeus2prob(edge: float, odds: float, json_format: bool) -> None:
+    """
+    Calculate probability from edge and US odds.
+
+    Examples:
+        sbcli edgeus2prob 0.05 -- -110
+        echo "0.05 -110" | sbcli edgeus2prob
+    """
+    if edge is None:
+        if not sys.stdin.isatty():
+            input_data = sys.stdin.read()
+            values = parse_input(input_data)
+
+            if len(values) < 2:
+                raise click.UsageError('Need edge and odds')
+
+            result = edge_us_to_prob(values[0], values[1])
+        else:
+            raise click.UsageError('Missing arguments')
+    else:
+        if odds is None:
+            raise click.UsageError('Missing odds argument')
+        result = edge_us_to_prob(edge, odds)
+
+    output_result(result, json_format)
+
+
+@cli.command()
+@click.argument('edge', type=float, required=False)
+@click.argument('odds', type=float, required=False)
+@click.option('--json', 'json_format', is_flag=True, help='Output as JSON')
+def edgedec2prob(edge: float, odds: float, json_format: bool) -> None:
+    """
+    Calculate probability from edge and decimal odds.
+
+    Examples:
+        sbcli edgedec2prob 0.05 1.909090909
+        echo "0.05 1.909090909" | sbcli edgedec2prob
+    """
+    if edge is None:
+        if not sys.stdin.isatty():
+            input_data = sys.stdin.read()
+            values = parse_input(input_data)
+
+            if len(values) < 2:
+                raise click.UsageError('Need edge and odds')
+
+            result = edge_dec_to_prob(values[0], values[1])
+        else:
+            raise click.UsageError('Missing arguments')
+    else:
+        if odds is None:
+            raise click.UsageError('Missing odds argument')
+        result = edge_dec_to_prob(edge, odds)
+
+    output_result(result, json_format)
+
+
+@cli.command()
+@click.argument('probability', type=float, required=False)
+@click.argument('edge', type=float, required=False)
+@click.option('--json', 'json_format', is_flag=True, help='Output as JSON')
+def probedge2us(probability: float, edge: float, json_format: bool) -> None:
+    """
+    Calculate US odds from probability and edge.
+
+    Examples:
+        sbcli probedge2us 0.55 0.05
+        echo "0.55 0.05" | sbcli probedge2us
+    """
+    if probability is None:
+        if not sys.stdin.isatty():
+            input_data = sys.stdin.read()
+            values = parse_input(input_data)
+
+            if len(values) < 2:
+                raise click.UsageError('Need probability and edge')
+
+            result = prob_edge_to_us(values[0], values[1])
+        else:
+            raise click.UsageError('Missing arguments')
+    else:
+        if edge is None:
+            raise click.UsageError('Missing edge argument')
+        result = prob_edge_to_us(probability, edge)
+
+    output_result(result, json_format)
+
+
+@cli.command()
+@click.argument('probability', type=float, required=False)
+@click.argument('edge', type=float, required=False)
+@click.option('--json', 'json_format', is_flag=True, help='Output as JSON')
+def probedge2dec(probability: float, edge: float, json_format: bool) -> None:
+    """
+    Calculate decimal odds from probability and edge.
+
+    Examples:
+        sbcli probedge2dec 0.55 0.05
+        echo "0.55 0.05" | sbcli probedge2dec
+    """
+    if probability is None:
+        if not sys.stdin.isatty():
+            input_data = sys.stdin.read()
+            values = parse_input(input_data)
+
+            if len(values) < 2:
+                raise click.UsageError('Need probability and edge')
+
+            result = prob_edge_to_dec(values[0], values[1])
+        else:
+            raise click.UsageError('Missing arguments')
+    else:
+        if edge is None:
+            raise click.UsageError('Missing edge argument')
+        result = prob_edge_to_dec(probability, edge)
+
+    output_result(result, json_format)
 
 
 if __name__ == '__main__':
