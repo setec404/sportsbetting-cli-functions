@@ -156,3 +156,113 @@ def decimal_to_result(
         return -wager
     else:  # push
         return Decimal('0')
+
+
+def us_risk_to_win(us_odds: Union[int, float, Decimal], risk: Union[int, float, Decimal] = 1) -> Decimal:
+    """
+    Calculate win quantity from US odds and risk amount.
+
+    This is identical to us_to_win but uses 'risk' terminology.
+    Aliased as usr2w.
+
+    Args:
+        us_odds: US-style odds (e.g., -110, +150)
+        risk: Risk quantity (default: 1)
+
+    Returns:
+        Potential win quantity
+
+    Examples:
+        >>> us_risk_to_win(-110, 22)
+        Decimal('20')
+    """
+    return us_to_win(us_odds, risk)
+
+
+# Alias
+usr2w = us_risk_to_win
+
+
+def us_win_to_risk(us_odds: Union[int, float, Decimal], win: Union[int, float, Decimal] = 1) -> Decimal:
+    """
+    Calculate required risk from US odds and desired win amount.
+
+    Aliased as usw2r.
+
+    Args:
+        us_odds: US-style odds (e.g., -110, +150)
+        win: Desired win quantity (default: 1)
+
+    Returns:
+        Required risk quantity
+
+    Examples:
+        >>> us_win_to_risk(-110, 20)
+        Decimal('22')
+    """
+    us_odds = Decimal(str(us_odds))
+    win = Decimal(str(win))
+
+    if us_odds > 0:
+        # Positive odds: risk = win / (odds / 100)
+        return win / (us_odds / Decimal('100'))
+    else:
+        # Negative odds: risk = win / (100 / |odds|)
+        return win / (Decimal('100') / abs(us_odds))
+
+
+# Alias
+usw2r = us_win_to_risk
+
+
+def decimal_risk_to_win(decimal_odds: Union[float, Decimal], risk: Union[int, float, Decimal] = 1) -> Decimal:
+    """
+    Calculate win quantity from decimal odds and risk amount.
+
+    This is identical to decimal_to_win but uses 'risk' terminology.
+    Aliased as decr2w.
+
+    Args:
+        decimal_odds: Decimal odds (e.g., 1.909090909, 2.5)
+        risk: Risk quantity (default: 1)
+
+    Returns:
+        Potential win quantity
+
+    Examples:
+        >>> decimal_risk_to_win(1.909090909, 22)
+        Decimal('20')
+    """
+    return decimal_to_win(decimal_odds, risk)
+
+
+# Alias
+decr2w = decimal_risk_to_win
+
+
+def decimal_win_to_risk(decimal_odds: Union[float, Decimal], win: Union[int, float, Decimal] = 1) -> Decimal:
+    """
+    Calculate required risk from decimal odds and desired win amount.
+
+    Aliased as decw2r.
+
+    Args:
+        decimal_odds: Decimal odds (e.g., 1.909090909, 2.5)
+        win: Desired win quantity (default: 1)
+
+    Returns:
+        Required risk quantity
+
+    Examples:
+        >>> decimal_win_to_risk(1.909090909, 20)
+        Decimal('22')
+    """
+    decimal_odds = Decimal(str(decimal_odds))
+    win = Decimal(str(win))
+
+    # risk = win / (decimal_odds - 1)
+    return win / (decimal_odds - Decimal('1'))
+
+
+# Alias
+decw2r = decimal_win_to_risk
