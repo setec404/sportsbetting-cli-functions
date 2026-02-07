@@ -9,6 +9,12 @@ from sbcli.core.converters import (
     decimal_to_us,
     us_to_parlay,
 )
+from sbcli.core.winnings import (
+    us_to_win,
+    decimal_to_win,
+    us_to_result,
+    decimal_to_result,
+)
 from sbcli.io.input_parser import parse_input
 from sbcli.io.output_formatter import output_result
 
@@ -114,6 +120,144 @@ def dec2us(odds: float, json_format: bool) -> None:
 def sbrver() -> None:
     """Display sbcli version"""
     click.echo("sbcli version 0.1.0")
+
+
+@cli.command()
+@click.argument('odds', type=float, required=False)
+@click.argument('wager', type=float, required=False, default=1)
+@click.option('--json', 'json_format', is_flag=True, help='Output as JSON')
+def us2win(odds: float, wager: float, json_format: bool) -> None:
+    """
+    Calculate potential win from US odds and wager.
+
+    Examples:
+        sbcli us2win -- -110 200
+        sbcli us2win -- -120 120
+        echo "-110 200" | sbcli us2win
+    """
+    if odds is None:
+        if not sys.stdin.isatty():
+            input_data = sys.stdin.read()
+            values = parse_input(input_data)
+
+            if len(values) == 0:
+                raise click.UsageError('No valid odds provided')
+            elif len(values) == 1:
+                result = us_to_win(values[0], wager)
+            else:
+                result = us_to_win(values[0], values[1] if len(values) > 1 else 1)
+        else:
+            raise click.UsageError('Missing odds argument')
+    else:
+        result = us_to_win(odds, wager)
+
+    output_result(result, json_format)
+
+
+@cli.command()
+@click.argument('odds', type=float, required=False)
+@click.argument('wager', type=float, required=False, default=1)
+@click.option('--json', 'json_format', is_flag=True, help='Output as JSON')
+def dec2win(odds: float, wager: float, json_format: bool) -> None:
+    """
+    Calculate potential win from decimal odds and wager.
+
+    Examples:
+        sbcli dec2win 1.909090909 110
+        sbcli dec2win 2.5 100
+        echo "2.5 100" | sbcli dec2win
+    """
+    if odds is None:
+        if not sys.stdin.isatty():
+            input_data = sys.stdin.read()
+            values = parse_input(input_data)
+
+            if len(values) == 0:
+                raise click.UsageError('No valid odds provided')
+            elif len(values) == 1:
+                result = decimal_to_win(values[0], wager)
+            else:
+                result = decimal_to_win(values[0], values[1] if len(values) > 1 else 1)
+        else:
+            raise click.UsageError('Missing odds argument')
+    else:
+        result = decimal_to_win(odds, wager)
+
+    output_result(result, json_format)
+
+
+@cli.command()
+@click.argument('odds', type=float, required=False)
+@click.argument('wager', type=float, required=False, default=1)
+@click.argument('result_str', type=str, required=False, default="WIN")
+@click.option('--json', 'json_format', is_flag=True, help='Output as JSON')
+def us2res(odds: float, wager: float, result_str: str, json_format: bool) -> None:
+    """
+    Calculate actual result from US odds, wager, and outcome.
+
+    Result can be: WIN/W/1, LOSS/L/-1, PUSH/P/0
+
+    Examples:
+        sbcli us2res -- -110 200 WIN
+        sbcli us2res -- -120 120 PUSH
+        echo "-110 200 L" | sbcli us2res
+    """
+    if odds is None:
+        if not sys.stdin.isatty():
+            input_data = sys.stdin.read()
+            parts = input_data.strip().split()
+
+            if len(parts) == 0:
+                raise click.UsageError('No valid odds provided')
+
+            odds_val = Decimal(parts[0])
+            wager_val = Decimal(parts[1]) if len(parts) > 1 else Decimal('1')
+            result_val = parts[2] if len(parts) > 2 else "WIN"
+
+            result = us_to_result(odds_val, wager_val, result_val)
+        else:
+            raise click.UsageError('Missing odds argument')
+    else:
+        result = us_to_result(odds, wager, result_str)
+
+    output_result(result, json_format)
+
+
+@cli.command()
+@click.argument('odds', type=float, required=False)
+@click.argument('wager', type=float, required=False, default=1)
+@click.argument('result_str', type=str, required=False, default="WIN")
+@click.option('--json', 'json_format', is_flag=True, help='Output as JSON')
+def dec2res(odds: float, wager: float, result_str: str, json_format: bool) -> None:
+    """
+    Calculate actual result from decimal odds, wager, and outcome.
+
+    Result can be: WIN/W/1, LOSS/L/-1, PUSH/P/0
+
+    Examples:
+        sbcli dec2res 1.909090909 200 WIN
+        sbcli dec2res 2.5 100 LOSS
+        echo "2.0 100 P" | sbcli dec2res
+    """
+    if odds is None:
+        if not sys.stdin.isatty():
+            input_data = sys.stdin.read()
+            parts = input_data.strip().split()
+
+            if len(parts) == 0:
+                raise click.UsageError('No valid odds provided')
+
+            odds_val = Decimal(parts[0])
+            wager_val = Decimal(parts[1]) if len(parts) > 1 else Decimal('1')
+            result_val = parts[2] if len(parts) > 2 else "WIN"
+
+            result = decimal_to_result(odds_val, wager_val, result_val)
+        else:
+            raise click.UsageError('Missing odds argument')
+    else:
+        result = decimal_to_result(odds, wager, result_str)
+
+    output_result(result, json_format)
 
 
 if __name__ == '__main__':
