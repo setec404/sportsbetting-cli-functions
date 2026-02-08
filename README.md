@@ -37,6 +37,41 @@ sbcli probus2edge 0.55 -110
 # Pipe commands together
 echo "-110" | sbcli us2dec | sbcli dec2prob
 # Output: 0.523809524
+
+Usage: sbcli [OPTIONS] COMMAND [ARGS]...
+
+  Sports betting CLI calculator
+
+Options:
+  --version  Show the version and exit.
+  --help     Show this message and exit.
+
+Commands:
+  dec2fair      Calculate fair value (zero-vig) decimal odds.
+  dec2hold      Calculate theoretical hold from decimal odds.
+  dec2prob      Convert decimal odds to implied probability.
+  dec2real      Calculate zero-vig (real) probabilities from decimal odds.
+  dec2res       Calculate actual result from decimal odds, wager, and...
+  dec2us        Convert decimal odds to US odds.
+  dec2win       Calculate potential win from decimal odds and wager.
+  edgedec2prob  Calculate probability from edge and decimal odds.
+  edgeus2prob   Calculate probability from edge and US odds.
+  probdec2edge  Calculate edge from probability and decimal odds.
+  probedge2dec  Calculate decimal odds from probability and edge.
+  probedge2us   Calculate US odds from probability and edge.
+  probus2edge   Calculate edge from probability and US odds.
+  sbrver        Display sbcli version
+  us2dec        Convert US odds to decimal odds.
+  us2fair       Calculate fair value (zero-vig) US odds.
+  us2hold       Calculate theoretical hold from US odds.
+  us2par        Convert US odds to parlay US odds.
+  us2prob       Convert US odds to implied probability.
+  us2real       Calculate zero-vig (real) probabilities from US odds.
+  us2res        Calculate actual result from US odds, wager, and outcome.
+  us2win        Calculate potential win from US odds and wager.
+
+
+
 ```
 
 ## Features
